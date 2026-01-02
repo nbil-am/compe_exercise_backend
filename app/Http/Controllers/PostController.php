@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Comments;
 use App\Models\likes;
 use App\Models\Posts;
+use Dom\Comment;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -22,6 +24,8 @@ class PostController extends Controller
     public function getAll()
     {
         $posts = Posts::with(relations: 'User')->get();
+        $comments = Comments::get();
+        $likes = likes::get()->count();
 
         return $posts->map(
             fn($post) =>
@@ -32,6 +36,8 @@ class PostController extends Controller
                 'created_at' => $post->created_at,
                 'updated_at' => $post->updated_at,
                 'author' => $post->user, // 🔥 rename di sini
+                'comments' => $comments,
+                'likes' => $likes
             ]
         );
 
