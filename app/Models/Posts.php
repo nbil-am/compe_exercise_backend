@@ -12,9 +12,9 @@ class Posts extends Model
         return $this->belongsTo(User::class,'user_id','id');
     }
     public function likes() {
-        return $this->hasMany(likes::class);
+        return $this->hasMany(likes::class, 'post_id','id');
     }
     public function comments() {
-        return $this->hasMany(Comments::class);
+        return $this->hasMany(likes::class, 'post_id','id');
     }
 }

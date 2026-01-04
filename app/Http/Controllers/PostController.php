@@ -22,26 +22,24 @@ class PostController extends Controller
         return response()->json(['post' => $post, 'user' => $user], 201);
     }
     public function getAll()
-    {
-        $posts = Posts::with(relations: 'User')->get();
-        $comments = Comments::get();
-        $likes = likes::get()->count();
+{
+    $posts = Posts::with(['user', 'comments'])
+        ->withCount('likes')
+        ->orderByDesc('likes_count')
+        ->get();
 
-        return $posts->map(
-            fn($post) =>
-            [
-                'id' => $post->id,
-                'user_id' => $post->user_id,
-                'content' => $post->content,
-                'created_at' => $post->created_at,
-                'updated_at' => $post->updated_at,
-                'author' => $post->user, // 🔥 rename di sini
-                'comments' => $comments,
-                'likes' => $likes
-            ]
-        );
+    return $posts->map(fn ($post) => [
+        'id' => $post->id,
+        'user_id' => $post->user_id,
+        'content' => $post->content,
+        'created_at' => $post->created_at,
+        'updated_at' => $post->updated_at,
+        'author' => $post->user,
+        'comments' => $post->comments,
+        'likes' => $post->likes_count,
+    ]);
+}
 
-    }
     public function edit(Request $request,$id)
     {
         $validated = $request->validate([
