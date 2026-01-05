@@ -19,16 +19,17 @@ class PostController extends Controller
 
         $post = $user->Posts()->create(['content' => $validated['content']]);
 
-        return response()->json(['post' => $post, 'user' => $user], 201);
+        return response()->json(['message'=>'Post added successfully','Post_data'=>$post], 201);
     }
     public function getAll()
 {
-    $posts = Posts::with(['user', 'comments'])
+    $posts = Posts::with(['User','comments'])
         ->withCount('likes')
         ->orderByDesc('likes_count')
         ->get();
 
     return $posts->map(fn ($post) => [
+        // 'posts'=>$post,
         'id' => $post->id,
         'user_id' => $post->user_id,
         'content' => $post->content,
@@ -45,19 +46,20 @@ class PostController extends Controller
         $validated = $request->validate([
             'content' => ['required', 'string', 'max:1000']
         ]);
-
+        $status = true;
         $post = Posts::findOrFail($id);
         $user = $request->user();
 
         if ($post->user_id !== $user->id) {
-            return response()->json(['error' => 'not the author'], 403);
+            $status = false;
+            return response()->json(['error' => 'not the author','post'=>$status], 403);
         }
 
         $post->update(['content' => trim($validated['content'])]);
 
         return response()->json([
             'message' => 'Post updated successfully',
-            'post' => $post
+            'post' => $status
         ], 200);
     }
     public function delete(Request $req,$id)
@@ -79,7 +81,7 @@ class PostController extends Controller
             return ['error' => 'you have liked it'];
         }
         $like = $user->likes()->create(['post_id'=>$validated['id']]);
-        return ['message' => 'post liked successfully',$liked];
+        return ['message' => 'post liked successfully'];
     }
     public function comment(Request $req)
     {

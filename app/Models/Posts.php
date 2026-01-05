@@ -15,6 +15,6 @@ class Posts extends Model
         return $this->hasMany(likes::class, 'post_id','id');
     }
     public function comments() {
-        return $this->hasMany(likes::class, 'post_id','id');
+        return $this->hasMany(Comments::class, 'post_id','id');
     }
 }

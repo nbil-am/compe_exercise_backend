@@ -16,7 +16,7 @@ Route::post('logout',[AuthController::class,'logOut'])->middleware('auth:sanctum
 Route::post('add/post',[PostController::class,'add'])->middleware('auth:sanctum');
 Route::get('all/posts',[PostController::class,'getAll'])->middleware('auth:sanctum');
 Route::put('edit/post/{id}',[PostController::class,'edit'])->middleware('auth:sanctum');
-Route::delete('delete/post/{id}',[PostController::class,'delete'])->middleware('auth:sanctum');
+Route::post('delete/post/{id}',[PostController::class,'delete'])->middleware('auth:sanctum');
 // like and comment
 Route::post('like',[PostController::class,'like'])->middleware('auth:sanctum');
 Route::post('comment',[PostController::class,'comment'])->middleware('auth:sanctum');
